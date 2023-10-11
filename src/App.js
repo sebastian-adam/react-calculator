@@ -4,16 +4,15 @@ import { useState, useEffect } from "react";
 import Button from "./Button.tsx";
 
 //TODO: Convert this file to Typescript
-// TODO: Move constants to another file
 
 ///////
 // Calculator constants
 ///////
 
-// Submission operators
-const EQUALS_BUTTON_ID = "equals";
+// Calulate the input
+const EQUALS_ID = "equals";
 const EQUALS = {
-  name: EQUALS_BUTTON_ID,
+  name: EQUALS_ID,
   label: "=",
   operator: (equationParts) => {
     const equationNumbers = equationParts.filter((part, i) => (i + 1) % 2);
@@ -32,9 +31,10 @@ const EQUALS = {
   },
 };
 
-const CLEAR_BUTTON_ID = "clear";
+// Clear the input
+const CLEAR_ID = "clear";
 const CLEAR = {
-  name: CLEAR_BUTTON_ID,
+  name: CLEAR_ID,
   label: "A/C",
   operator: () => 0,
 };
@@ -77,6 +77,7 @@ const MINUS = {
   operator: (x, y) => x - y,
 };
 
+// Calculator layout
 // NOTE: Order matters to presentation
 const operatorButtons = [
   CLEAR,
@@ -119,10 +120,10 @@ function App() {
       // ...else if the equation is already initialized...
     } else {
       // ...and if the user hits clear, then reset state by emptying it.
-      if (nextValue?.name === CLEAR_BUTTON_ID) {
+      if (nextValue?.name === CLEAR_ID) {
         setEquation([]);
         // ...or if the user hits equals, reduce the array to one total value.
-      } else if (nextValue?.name === EQUALS_BUTTON_ID) {
+      } else if (nextValue?.name === EQUALS_ID) {
         setEquation([nextValue.operator(equation).toString()]);
       } else {
         // If the last value in the "equation" array and the next value are unalike in type, they are separate items on array.
@@ -131,7 +132,12 @@ function App() {
         }
 
         // If the last value in the "equation" array is a string, and the next value is a string, combine them into one number.
-        if (typeof lastValue === "string" && typeof nextValue === "string") {
+        // Note: Do nothing if the the user is trying to add a second decimal to a number
+        if (
+          typeof lastValue === "string" &&
+          typeof nextValue === "string" &&
+          !(lastValue.includes(".") && nextValue === ".")
+        ) {
           setEquation([...valuesBeforeLastValue, `${lastValue}${nextValue}`]);
         }
 
