@@ -96,21 +96,29 @@ function App() {
     const lastValue = equation[equation.length - 1];
     const valuesBeforeLastValue = equation.slice(0, -1);
 
-    // ..if the last value in the "equation" array is undefined, and the next value is a string, append
-    if (equation.length === 0 && typeof nextValue === "string") {
-      setEquation([nextValue]);
-    }
-
-    // ..if the last value in the "equation" array is a string, and the next value is a string, combine
-    if (typeof lastValue === "string" && typeof nextValue === "string") {
-      setEquation([...valuesBeforeLastValue, `${lastValue}${nextValue}`]);
+    // ..if the last value in the "equation" array is undefined...
+    if (equation.length === 0) {
+      // ...and the next value is a string, add it to array
+      if (typeof nextValue === "string") {
+        setEquation([nextValue]);
+      }
+      // ...and the next value is not a string, do nothing
+    } else {
+      // ..if the last value in the "equation" array and the next value are unalike in type, append next value to array
+      if (typeof lastValue !== typeof nextValue) {
+        setEquation([...equation, nextValue]);
+        // ..if the last value in the "equation" array is a string, and the next value is a string, combine them into one string
+      } else if (
+        typeof lastValue === "string" &&
+        typeof nextValue === "string"
+      ) {
+        setEquation([...valuesBeforeLastValue, `${lastValue}${nextValue}`]);
+      }
     }
 
     // ..if the the next value is a a submission operator, reduce (to single item)
 
     // ..if the last value in the "equation" array is an operator, and the next value is an operator, replace
-
-    // ..if the last value in the "equation" array and the next value are unalike in type, append
   }
 
   // Presentation layer
@@ -118,10 +126,10 @@ function App() {
 
   useEffect(() => {
     const equationLabels = equation.map((value) =>
-      typeof value === "string" ? equation : equation.label
+      typeof value === "string" ? value : value.label
     );
 
-    setStringValue(equationLabels.join());
+    setStringValue(equationLabels.join(""));
   }, [equation]);
 
   return (
