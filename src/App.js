@@ -113,7 +113,8 @@ function App() {
     // ...if the equation is unitialized...
     if (equation.length === 0) {
       // ...and the first value is a string, add the digit as a new item on array.
-      if (typeof nextValue === "string") {
+      // Note: Don't allow user submitted leading zeros
+      if (typeof nextValue === "string" && nextValue !== "0") {
         setEquation([nextValue]);
       }
       // (If the first value is not a string, do nothing.)
