@@ -11,10 +11,25 @@ import Button from "./Button.tsx";
 ///////
 
 // Submission operators
+const EQUALS_BUTTON_ID = "equals";
 const EQUALS = {
-  name: "equals",
+  name: EQUALS_BUTTON_ID,
   label: "=",
-  operator: () => 999, // FIXME
+  operator: (equationParts) => {
+    const equationNumbers = equationParts.filter((part, i) => (i + 1) % 2);
+    const equationOperators = equationParts.filter((part, i) => i % 2);
+
+    // Initiate a running total with the first number value
+    let runningTotal = equationNumbers[0];
+
+    // Loop over operators, combining the numbers that surround them
+    equationOperators.forEach((operator, i) => {
+      runningTotal = operator.operator(runningTotal, equationNumbers[i + 1]);
+    });
+
+    // TODO: The equation is currently run sequentially, but we should consider order of operations eventually
+    return runningTotal;
+  },
 };
 
 const CLEAR_BUTTON_ID = "clear";
@@ -53,7 +68,7 @@ const MULTIPLY_BY_MINUS_1 = {
 const PLUS = {
   name: "plus",
   label: "+",
-  operator: (x, y) => x + y,
+  operator: (x, y) => +x + +y,
 };
 
 const MINUS = {
@@ -88,44 +103,44 @@ const operatorButtons = [
 function App() {
   // Local state variable "equation" is an array of operators and numbers
   const [equation, setEquation] = useState([]);
-  // TODO: The equation is currently run sequentially, but we should consider order of operations
 
   // When the user clicks a calculator button...
   function onClick(nextValue) {
     const lastValue = equation[equation.length - 1];
     const valuesBeforeLastValue = equation.slice(0, -1);
 
-    // ..if the equation is unitialized..
+    // ...if the equation is unitialized...
     if (equation.length === 0) {
       // ...and the first value is a string, add the digit as a new item on array.
       if (typeof nextValue === "string") {
         setEquation([nextValue]);
       }
-      // (if the first value is not a string, do nothing)
-      // else if the equation is already initialized..
+      // (If the first value is not a string, do nothing.)
+      // ...else if the equation is already initialized...
     } else {
-      // ...if the user hits clear, unset state
+      // ...and if the user hits clear, then reset state by emptying it.
       if (nextValue?.name === CLEAR_BUTTON_ID) {
         setEquation([]);
-        // if the last value in the "equation" array and the next value are unalike in type, add new item to array.
+        // ...or if the user hits equals, reduce the array to one total value.
+      } else if (nextValue?.name === EQUALS_BUTTON_ID) {
+        setEquation([nextValue.operator(equation).toString()]);
       } else {
+        // If the last value in the "equation" array and the next value are unalike in type, they are separate items on array.
         if (typeof lastValue !== typeof nextValue) {
           setEquation([...equation, nextValue]);
         }
 
-        // ..if the last value in the "equation" array is a string, and the next value is a string, combine them into one number.
+        // If the last value in the "equation" array is a string, and the next value is a string, combine them into one number.
         if (typeof lastValue === "string" && typeof nextValue === "string") {
           setEquation([...valuesBeforeLastValue, `${lastValue}${nextValue}`]);
         }
 
-        // ..if the last value in the "equation" array is an operator, and the next value is an operator, overwrite previous operator.
-        if (lastValue.operator && nextValue.operator) {
+        // If the last value in the "equation" array is an operator, and the next value is an operator, overwrite previous operator.
+        if (lastValue?.operator && nextValue?.operator) {
           setEquation([...valuesBeforeLastValue, nextValue]);
         }
       }
     }
-
-    // ..if the the next value is a a submission operator, reduce (to single item)
   }
 
   // Presentation layer
@@ -147,7 +162,7 @@ function App() {
         </header>
       </div>
       <main className="calculator">
-        <div className="display">{stringValue}</div>
+        <div className="display">{stringValue || 0}</div>
         <div className="keypad">
           {operatorButtons.map((button) => {
             return (
