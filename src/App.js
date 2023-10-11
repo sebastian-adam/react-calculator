@@ -17,13 +17,12 @@ const EQUALS = {
   operator: () => 999, // FIXME
 };
 
+const CLEAR_BUTTON_ID = "clear";
 const CLEAR = {
-  name: "clear",
+  name: CLEAR_BUTTON_ID,
   label: "A/C",
   operator: () => 0,
 };
-
-const SUBMISSION_OPERATORS = [EQUALS, CLEAR];
 
 // First-order operators
 const MULTIPLY = {
@@ -102,22 +101,27 @@ function App() {
       if (typeof nextValue === "string") {
         setEquation([nextValue]);
       }
-      // (if the next value is not a string, do nothing)
+      // (if the first value is not a string, do nothing)
       // else if the equation is already initialized..
     } else {
-      // if the last value in the "equation" array and the next value are unalike in type, add new item to array.
-      if (typeof lastValue !== typeof nextValue) {
-        setEquation([...equation, nextValue]);
-      }
+      // ...if the user hits clear, unset state
+      if (nextValue?.name === CLEAR_BUTTON_ID) {
+        setEquation([]);
+        // if the last value in the "equation" array and the next value are unalike in type, add new item to array.
+      } else {
+        if (typeof lastValue !== typeof nextValue) {
+          setEquation([...equation, nextValue]);
+        }
 
-      // ..if the last value in the "equation" array is a string, and the next value is a string, combine them into one number.
-      if (typeof lastValue === "string" && typeof nextValue === "string") {
-        setEquation([...valuesBeforeLastValue, `${lastValue}${nextValue}`]);
-      }
+        // ..if the last value in the "equation" array is a string, and the next value is a string, combine them into one number.
+        if (typeof lastValue === "string" && typeof nextValue === "string") {
+          setEquation([...valuesBeforeLastValue, `${lastValue}${nextValue}`]);
+        }
 
-      // ..if the last value in the "equation" array is an operator, and the next value is an operator, overwrite previous operator.
-      if (lastValue.operator && nextValue.operator) {
-        setEquation([...valuesBeforeLastValue, nextValue]);
+        // ..if the last value in the "equation" array is an operator, and the next value is an operator, overwrite previous operator.
+        if (lastValue.operator && nextValue.operator) {
+          setEquation([...valuesBeforeLastValue, nextValue]);
+        }
       }
     }
 
