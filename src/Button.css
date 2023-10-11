@@ -13,7 +13,13 @@
   cursor: pointer;
 }
 
-.calculator-button:active, .calculator-button:focus {
+.calculator-button:focus {
+  outline: none;
+  background-color: transparent;
+  color: lightblue;
+}
+
+.calculator-button:active {
   outline: none;
   background-color: #4a5161;
 }
