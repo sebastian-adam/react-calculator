@@ -153,8 +153,12 @@ function App() {
   const [stringValue, setStringValue] = useState([]);
 
   useEffect(() => {
+    // We need to present numbers with leading decimals as having a leading 0
+    const getStringValue = (value) =>
+      value.charAt(0) === "." ? `0${value}` : value;
+
     const equationLabels = equation.map((value) =>
-      typeof value === "string" ? value : value.label
+      typeof value === "string" ? getStringValue(value) : value.label
     );
 
     setStringValue(equationLabels.join(""));
