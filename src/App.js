@@ -93,10 +93,23 @@ function App() {
 
   // When the user clicks a calculator button...
   function onClick(nextValue) {
+    const lastValue = equation[equation.length - 1];
+    const valuesBeforeLastValue = equation.slice(0, -1);
+
     // ..if the last value in the "equation" array is undefined, and the next value is a string, append
+    if (equation.length === 0 && typeof nextValue === "string") {
+      setEquation([nextValue]);
+    }
+
     // ..if the last value in the "equation" array is a string, and the next value is a string, combine
+    if (typeof lastValue === "string" && typeof nextValue === "string") {
+      setEquation([...valuesBeforeLastValue, `${lastValue}${nextValue}`]);
+    }
+
     // ..if the the next value is a a submission operator, reduce (to single item)
+
     // ..if the last value in the "equation" array is an operator, and the next value is an operator, replace
+
     // ..if the last value in the "equation" array and the next value are unalike in type, append
   }
 
