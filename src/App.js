@@ -43,13 +43,13 @@ const CLEAR = {
 const MULTIPLY = {
   name: "multiply",
   label: "x",
-  operator: (x, y) => x * y,
+  operator: (x, y = 1) => x * y,
 };
 
 const DIVIDE = {
   name: "divide",
   label: "÷",
-  operator: (x, y) => x / y,
+  operator: (x, y = 1) => x / y,
 };
 
 const DIVIDE_BY_100 = {
@@ -68,13 +68,13 @@ const MULTIPLY_BY_MINUS_1 = {
 const PLUS = {
   name: "plus",
   label: "+",
-  operator: (x, y) => +x + +y,
+  operator: (x, y) => +x + (+y || 0),
 };
 
 const MINUS = {
   name: "minus",
   label: "-",
-  operator: (x, y) => x - y,
+  operator: (x, y) => x - (y || 0),
 };
 
 // Calculator layout
