@@ -1,13 +1,8 @@
 import React from "react";
+import { ButtonValueProps } from "./models/button";
 import "./Button.css";
 
 // NOTE: Button should be as "dumb" as possible
-
-export interface ButtonValueProps {
-  name: string | undefined;
-  label: string | undefined;
-  operator: () => void | undefined;
-}
 
 export interface ButtonProps {
   value: ButtonValueProps | string;

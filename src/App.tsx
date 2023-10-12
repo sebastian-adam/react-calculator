@@ -1,9 +1,9 @@
+import React from "react";
 import "./App.css";
 
 import { useState, useEffect } from "react";
+import { ButtonValueProps } from "./models/button";
 import Button from "./Button.tsx";
-
-//TODO: Convert this file to Typescript
 
 ///////
 // Calculator constants
@@ -77,9 +77,12 @@ const MINUS = {
   operator: (x, y) => x - (y || 0),
 };
 
+///////
 // Calculator layout
+///////
+
 // NOTE: Order matters to presentation
-const operatorButtons = [
+const operatorButtons: (ButtonValueProps | string)[] = [
   CLEAR,
   MULTIPLY_BY_MINUS_1,
   DIVIDE_BY_100,
@@ -103,7 +106,7 @@ const operatorButtons = [
 
 function App() {
   // Local state variable "equation" is an array of operators and numbers
-  const [equation, setEquation] = useState([]);
+  const [equation, setEquation] = useState<(string | ButtonValueProps)[]>([]);
 
   // When the user clicks a calculator button...
   function onClick(nextValue) {
@@ -143,7 +146,7 @@ function App() {
         }
 
         // If the last value in the "equation" array is an operator, and the next value is an operator, overwrite previous operator.
-        if (lastValue?.operator && nextValue?.operator) {
+        if (typeof lastValue !== "string" && typeof nextValue !== "string") {
           setEquation([...valuesBeforeLastValue, nextValue]);
         }
       }
@@ -151,14 +154,15 @@ function App() {
   }
 
   // Presentation layer
-  const [stringValue, setStringValue] = useState([]);
+  const [stringValue, setStringValue] = useState<string>();
 
+  // When the equation is updated, let's recalculate the UI value
   useEffect(() => {
     // We need to present numbers with leading decimals as having a leading 0
-    const getStringValue = (value) =>
+    const getStringValue = (value: string) =>
       value.charAt(0) === "." ? `0${value}` : value;
 
-    const equationLabels = equation.map((value) =>
+    const equationLabels = equation.map((value: string | ButtonValueProps) =>
       typeof value === "string" ? getStringValue(value) : value.label
     );
 
@@ -178,7 +182,7 @@ function App() {
           {operatorButtons.map((button) => {
             return (
               <Button
-                key={button?.name || button}
+                key={typeof button === "string" ? button : button?.name}
                 value={button}
                 onClick={onClick}
               />
